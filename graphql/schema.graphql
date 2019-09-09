@@ -1,0 +1,487 @@
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-01-01 13:00:00`."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+"A date string with format `Y-m-d`, e.g. `2011-05-23`."
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+"Can be used as an argument to upload files using https://github.com/jaydenseric/graphql-multipart-request-spec" 
+scalar Upload @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Upload")
+
+
+type Query {
+    users: [User!]! @paginate(type: "paginator" model: "App\\User")
+    getAllCoverLetterReview: [CoverLetterReviewForm!]! @all
+    getAllResumeReviewForm: [ResumeReviewForm!]! @all
+    getAllGraduateSchoolStatementReviewForm: [GraduateSchoolStatementReviewForm!]! @all
+    getAllCoverLetterRedraft: [CoverLetterRedraft!]! @all
+    getAllGraduateSchoolEssayRedraftForm: [GraduateSchoolEssayRedraftForm!]! @all
+ 
+
+    user(id: ID @eq): User @find(model: "App\\User")
+    getAssignRequest(form_id: String! @where(operator: "=")): [AssignRequest!]! @all
+    getExpert(id: ID @eq): User @find(model: "App\\User")
+
+    getExperts(account_type: String! @where(operator: "Expert")): [User!]! @all
+
+
+    applicationReview(form_id: String @eq): ApplicationReview @find(model: "App\\ApplicationReview")
+
+    getClientMessages(client_id: String! @where(operator: "=")): [Messages!]! @all
+    getExpertClientMessages(expert_id: String! @where(operator: "="), client_id: String! @where(operator: "=")): [Messages!]! @all
+
+    getExpertInCharge(id: ID! @where(operator: "=")): [User!]! @all
+
+
+    getExpertClientsCoverLetterReview(has_expert: ID! @where(operator: "=")): [CoverLetterReviewForm!]! @all
+    getExpertClientsResumeReviewForm(has_expert: ID! @where(operator: "=")): [ResumeReviewForm!]! @all
+    getExpertClientsGraduateSchoolStatementReviewForm(has_expert: ID! @where(operator: "=")): [GraduateSchoolStatementReviewForm!]! @all
+    getExpertClientsCoverLetterRedraft(has_expert: ID! @where(operator: "=")): [CoverLetterRedraft!]! @all
+    getExpertClientsGraduateSchoolEssayRedraftForm(has_expert: ID! @where(operator: "=")): [GraduateSchoolEssayRedraftForm!]! @all
+
+    
+    getCoverLetterReview(form_id: String @eq): CoverLetterReviewForm @find(model: "App\\CoverLetterReviewForm")
+    getResumeReviewForm(form_id: String @eq): ResumeReviewForm @find(model: "App\\ResumeReviewForm")
+    getGraduateSchoolStatementReviewForm(form_id: String @eq): GraduateSchoolStatementReviewForm @find(model: "App\\GraduateSchoolStatementReviewForm")
+    getCoverLetterRedraft(form_id: String @eq): CoverLetterRedraft @find(model: "App\\CoverLetterRedraft")
+    getGraduateSchoolEssayRedraftForm(form_id: String @eq): GraduateSchoolEssayRedraftForm @find(model: "App\\GraduateSchoolEssayRedraftForm")
+
+    me:User @middleware(checks:"auth:api") @auth
+}
+type Mutation{
+
+	createCoverLetterReviewForm(
+    name: String @rules(apply:["required"])
+	industry_applied_for: String @rules(apply:["required"])
+	summary_of_interest: String @rules(apply:["required"])
+	curriculum_vitae: String @rules(apply:["required"])
+	package:String @rules(apply:["required"])
+	has_expert: String 
+	form_id: String @rules(apply:["required"])
+	status: String @rules(apply:["required"])
+	completed: Boolean @rules(apply:["required"])
+	):CoverLetterReviewForm @create(model:"App\\CoverLetterReviewForm")
+
+	updateCoverLetterReviewForm(
+	id:ID @rules(apply:["required"])
+	has_expert: String @rules(apply:["required"])
+	status: String @rules(apply:["required"])
+	):CoverLetterReviewForm @update(model:"App\\CoverLetterReviewForm")
+
+	markCompleteCoverLetterReviewForm(
+	id:ID @rules(apply:["required"])
+	completed: Boolean @rules(apply:["required"])
+	):CoverLetterReviewForm @update(model:"App\\CoverLetterReviewForm")
+
+	createResumeReviewForm(
+	    name: String @rules(apply:["required"])
+		industry_applied_for: String @rules(apply:["required"])
+		summary_of_interest: String @rules(apply:["required"])
+		curriculum_vitae: String @rules(apply:["required"])
+		package:String @rules(apply:["required"])
+		has_expert: String @rules(apply:["required"])
+		form_id: String 
+		status: String @rules(apply:["required"])
+		completed: Boolean @rules(apply:["required"])
+		):ResumeReviewForm @create(model:"App\\ResumeReviewForm")
+
+	updateResumeReviewForm(
+		id:ID @rules(apply:["required"])
+		has_expert: String @rules(apply:["required"])
+		status: String @rules(apply:["required"])
+		):ResumeReviewForm @update(model:"App\\ResumeReviewForm")
+
+	markCompleteResumeReviewForm(
+		id:ID @rules(apply:["required"])
+		completed: Boolean @rules(apply:["required"])
+		):ResumeReviewForm @update(model:"App\\ResumeReviewForm")
+
+
+	createGraduateSchoolStatementReviewForm(
+	    name: String @rules(apply:["required"])
+		university_and_course_applied_for: String @rules(apply:["required"])
+		summary_of_interest: String @rules(apply:["required"])
+		curriculum_vitae: String @rules(apply:["required"])
+		package:String @rules(apply:["required"])
+		has_expert: String 
+		form_id: String @rules(apply:["required"])
+		status: String @rules(apply:["required"])
+		completed:Boolean @rules(apply:["required"])
+		):GraduateSchoolStatementReviewForm @create(model:"App\\GraduateSchoolStatementReviewForm")
+
+	updateGraduateSchoolStatementReviewForm(
+	    id:ID @rules(apply:["required"])
+		has_expert: String @rules(apply:["required"])
+		status: String @rules(apply:["required"])
+		):GraduateSchoolStatementReviewForm @update(model:"App\\GraduateSchoolStatementReviewForm")
+
+	markCompleteGraduateSchoolStatementReviewForm(
+	    id:ID @rules(apply:["required"])
+		completed: Boolean @rules(apply:["required"])
+		):GraduateSchoolStatementReviewForm @update(model:"App\\GraduateSchoolStatementReviewForm")
+
+	createClientAcccount(
+		first_name: String @rules(apply:["required"])
+		last_name: String @rules(apply:["required"])
+		phone: String @rules(apply:["required"])
+		form_id: String @rules(apply:["required"])
+		package: String @rules(apply:["required"])
+		email: String @rules(apply:["required"])
+		password:String! @bcrypt
+		account_type:String @rules(apply:["required"])
+		):User @create(model:"App\\User")
+
+	updateClientAcccount(
+		id:ID @rules(apply:["required"])
+		first_name: String @rules(apply:["required"])
+		last_name: String @rules(apply:["required"])
+		phone: String @rules(apply:["required"])
+		email: String @rules(apply:["required"])
+		):User @update(model:"App\\User")
+
+	updatePassword(
+		id:ID @rules(apply:["required"])
+		password:String! @bcrypt
+		):User @update(model:"App\\User")
+
+	createCoverLetterRedraft(
+    	name: String @rules(apply:["required"])
+		address: String @rules(apply:["required"])
+		phone: String @rules(apply:["required"])
+		workplace_1: String @rules(apply:["required"])
+		workplace_1_roles: String @rules(apply:["required"])
+		workplace_1_recognized_job: String @rules(apply:["required"])
+		workplace_2: String @rules(apply:["required"])
+		workplace_2_roles: String @rules(apply:["required"])
+		workplace_2_recognized_job: String @rules(apply:["required"])
+		supervised_before: String @rules(apply:["required"])
+		supervised_workplace: String 
+		recent_tertiary_institute: String 
+		number_of_employee_supervised_workplace_1: String 
+		number_of_employee_supervised_workplace_2: String 
+		recent_tertiary_institute_name: String 
+		scholarship_and_awards: String 
+		final_grade_school_1: String @rules(apply:["required"])
+		result_rank_school_1: String @rules(apply:["required"])
+		top_courses_school_1: String 
+		project_dissertation_name_school_1: String @rules(apply:["required"])
+		next_most_recent_tertiary_education: String @rules(apply:["required"])
+		final_grade_school_2: String 
+		result_rank_school_2: String 
+		top_courses_school_2: String 
+		leadership_experience: String 
+	    interpersonal_skills:  Boolean @rules(apply:["required"])
+	    presentation_skills:  Boolean @rules(apply:["required"])
+	    programming: Boolean @rules(apply:["required"])
+	    microsoft_excel:  Boolean @rules(apply:["required"])
+	    java:  Boolean @rules(apply:["required"])
+	    other_skills: String
+		extracurricular_activities: String 
+		professional_workshops: String @rules(apply:["required"])
+		certification_dates: String 
+		organization_contacted_before_hand: String @rules(apply:["required"])
+		summary_of_interest: String 
+		curriculum_vitae: String @rules(apply:["required"])
+		package: String @rules(apply:["required"])
+		has_expert: String
+		form_id: String @rules(apply:["required"])
+		status: String @rules(apply:["required"])
+		completed: Boolean @rules(apply:["required"])
+		):CoverLetterRedraft @create(model:"App\\CoverLetterRedraft")
+
+
+	updateCoverLetterRedraft(
+	    id:ID @rules(apply:["required"])
+		has_expert: String @rules(apply:["required"])
+		status: String @rules(apply:["required"])
+		):CoverLetterRedraft @update(model:"App\\CoverLetterRedraft")
+
+	markCompleteCoverLetterRedraft(
+	    id:ID @rules(apply:["required"])
+		completed: Boolean @rules(apply:["required"])
+		):CoverLetterRedraft @update(model:"App\\CoverLetterRedraft")
+
+
+	createGraduateSchoolEssayRedraftForm(
+	    name: String @rules(apply:["required"])
+		phone: String @rules(apply:["required"])
+		employment_most_relevant_to_you_masters_application: String @rules(apply:["required"])
+		typical_achievements: String @rules(apply:["required"])
+		scholarships_and_award: String @rules(apply:["required"])
+		undegraduate_level_courses_master: String @rules(apply:["required"])
+		project_dissertation_name_master: String @rules(apply:["required"])
+		most_recent_undergraduate: String @rules(apply:["required"])
+		undergraduate_level_grade: String @rules(apply:["required"])
+		result_ranking: String @rules(apply:["required"])
+		undegraduate_level_courses_phd: String @rules(apply:["required"])
+		project_dissertation_name_phd: String @rules(apply:["required"])
+		leadership_experience: String @rules(apply:["required"])
+	    interpersonal_skills: Boolean @rules(apply:["required"])
+	    presentation_skills: Boolean @rules(apply:["required"])
+	    programming: Boolean @rules(apply:["required"])
+	    microsoft_excel: Boolean @rules(apply:["required"])
+	    java: Boolean @rules(apply:["required"])
+	    other_skills:String
+		extracurricular_activities: String @rules(apply:["required"])
+		professional_workshops: String @rules(apply:["required"])
+		academic_conferences_attended: String @rules(apply:["required"])
+		certificate: String @rules(apply:["required"])
+		english: Boolean @rules(apply:["required"])
+		french: Boolean @rules(apply:["required"])
+		german: Boolean @rules(apply:["required"])
+		spanish: Boolean @rules(apply:["required"])
+		nigeria_languages:Boolean @rules(apply:["required"])
+		other_languages:String 
+		masters_intended_area_of_research: String @rules(apply:["required"])
+		university_of_choice_and_course: String @rules(apply:["required"])
+		modules_interested: String @rules(apply:["required"])
+		teaching_personel_contacted: String @rules(apply:["required"])
+		summary_of_interest: String @rules(apply:["required"])
+		post_study_goal: String @rules(apply:["required"])
+		referee: String @rules(apply:["required"])
+		curriculum_vitae: String @rules(apply:["required"])
+		package: String @rules(apply:["required"])
+		has_expert: String 
+		form_id: String @rules(apply:["required"])
+		status: String @rules(apply:["required"])
+		completed: Boolean @rules(apply:["required"])
+		):GraduateSchoolEssayRedraftForm @create(model:"App\\GraduateSchoolEssayRedraftForm")
+
+	updateGraduateSchoolEssayRedraftForm(
+	    id:ID @rules(apply:["required"])
+		has_expert: String @rules(apply:["required"])
+		status: String @rules(apply:["required"])
+		):GraduateSchoolEssayRedraftForm @update(model:"App\\GraduateSchoolEssayRedraftForm")
+
+	markCompleteGraduateSchoolEssayRedraftForm(
+	    id:ID @rules(apply:["required"])
+		completed: Boolean @rules(apply:["required"])
+		):GraduateSchoolEssayRedraftForm @update(model:"App\\GraduateSchoolEssayRedraftForm")
+
+
+	createMessages(
+	    client_id: String @rules(apply:["required"])
+		client_name: String @rules(apply:["required"])
+		expert_id: String @rules(apply:["required"])
+		expert_name: String @rules(apply:["required"])
+		message_body:String
+		attachment_ref:String 
+		attachment_name:String 
+		message_type:String 
+	):Messages @create(model:"App\\Messages")
+
+	assignRequest(
+	    expert_id: String @rules(apply:["required"])
+		form_id: String @rules(apply:["required"])
+		package: String @rules(apply:["required"])
+	):AssignRequest @create(model:"App\\AssignRequest")
+
+	applicationReview(
+	    expert_id: String @rules(apply:["required"])
+		form_id: String @rules(apply:["required"])
+		rating: String @rules(apply:["required"])
+		comment: String 
+	):ApplicationReview @create(model:"App\\ApplicationReview")
+
+	resetForgottenPassword(
+	    email: String @rules(apply:["required"])
+		token: String @rules(apply:["required"])
+	):PasswordReset @create(model:"App\\PasswordReset")
+}
+
+type User {
+    id: ID!
+    first_name: String!
+    last_name: String!
+    phone: String!
+    form_id: String!
+    package: String!
+    email: String!
+    password:String!
+    account_type:String!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type Messages {
+    id: ID!
+    client_id: String!
+    client_name: String!
+    expert_id: String!
+    expert_name: String!
+    message_body: String
+    attachment_ref: String
+	attachment_name: String
+	message_type: String
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type ApplicationReview {
+    id: ID!
+    expert_id: String!
+    form_id: String!
+    rating: String!
+    comment: String
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type AssignRequest {
+    id: ID!
+    expert_id: String!
+    form_id: String!
+    package: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type CoverLetterRedraft {
+	id:ID!
+	name: String!
+	address: String!
+	phone: String!
+	workplace_1: String!
+	workplace_1_roles: String
+	workplace_1_recognized_job: String
+	workplace_2: String
+	workplace_2_roles: String
+	workplace_2_recognized_job: String!
+	supervised_before: String!
+	supervised_workplace: String!
+	recent_tertiary_institute: String!
+	number_of_employee_supervised_workplace_1: String
+	number_of_employee_supervised_workplace_2: String
+	recent_tertiary_institute_name: String!
+	scholarship_and_awards: String!
+	final_grade_school_1: String!
+	result_rank_school_1: String!
+	top_courses_school_1: String!
+	project_dissertation_name_school_1: String!
+	next_most_recent_tertiary_education: String!
+	final_grade_school_2: String!
+	result_rank_school_2: String!
+	top_courses_school_2: String!
+	leadership_experience: String!
+    interpersonal_skills: Boolean!
+    presentation_skills: Boolean!
+    programming: Boolean!
+    microsoft_excel: Boolean!
+    java: Boolean!
+    other_skills: String
+	extracurricular_activities: String!
+	professional_workshops: String!
+	certification_dates: String!
+	organization_contacted_before_hand: String!
+	summary_of_interest: String
+	curriculum_vitae: String
+	package: String!
+    has_expert: String
+    form_id: String!
+    status: String!
+    completed: Boolean!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type CoverLetterReviewForm {
+    id: ID!
+    name: String!
+	industry_applied_for: String!
+	summary_of_interest: String!
+	curriculum_vitae: String
+	package: String!
+    has_expert: String
+    form_id: String!
+    status: String!
+    completed: Boolean!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type GraduateSchoolEssayRedraftForm {
+    id: ID!
+    name: String!
+	phone: String!
+	employment_most_relevant_to_you_masters_application: String!
+	typical_achievements: String!
+	scholarships_and_award: String!
+	undegraduate_level_courses_master: String!
+	project_dissertation_name_master: String!
+	most_recent_undergraduate: String!
+	undergraduate_level_grade: String!
+	result_ranking: String!
+	undegraduate_level_courses_phd: String!
+	project_dissertation_name_phd: String!
+	leadership_experience: String!
+    interpersonal_skills:Boolean!
+    presentation_skills:Boolean!
+    programming:Boolean!
+    microsoft_excel:Boolean!
+    java:Boolean!
+    other_skills:String!
+	extracurricular_activities: String!
+	professional_workshops: String!
+	academic_conferences_attended: String!
+	certificate: String!
+	english:Boolean!
+	french:Boolean!
+	german:Boolean!
+	spanish:Boolean!
+	nigeria_languages:Boolean!
+	other_languages:String!
+	masters_intended_area_of_research: String!
+	university_of_choice_and_course: String!
+	modules_interested: String!
+	teaching_personel_contacted: String!
+	summary_of_interest: String!
+	post_study_goal: String!
+	referee: String!
+	curriculum_vitae: String
+	package: String!
+    has_expert: String
+    form_id: String!
+    status: String!
+    completed: Boolean!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+
+type GraduateSchoolStatementReviewForm {
+    id: ID!
+    name: String !
+	university_and_course_applied_for: String !
+	summary_of_interest: String !
+	curriculum_vitae: String
+	package: String !
+    has_expert: String
+    form_id: String!
+    status: String!
+    completed: Boolean!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type ResumeReviewForm {
+    id: ID!
+    name: String!
+	industry_applied_for: String!
+	summary_of_interest: String!
+	curriculum_vitae: String
+	package: String!
+    has_expert: String
+    form_id: String!
+    status: String!
+    form_id: String!
+    status: String!
+    completed: Boolean!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type PasswordReset{
+	email: String!
+	token:String!
+	created_at: DateTime!
+	updated_at: DateTime!
+}
